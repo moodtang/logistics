@@ -13,13 +13,28 @@ import org.springframework.stereotype.Service;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-    /*添加用户*/
+    /*注册用户*/
     public String addUser(UserEntity userEntity){
+        //      设置uid
         GetUid getUid =new GetUid();
-//      设置uid
         String uid = getUid.getUid();
         userEntity.setUserId(uid);
-        userRepository.save(userEntity);
-        return uid;
+        if(userRepository.findUserEntityByUsername(userEntity.getUsername())!=null){
+            return "the username have exited ";
+        }
+        if(userRepository.findUserEntityByUserPhone(userEntity.getUserPhone())!=null){
+            return "the phone have exited ";
+        }
+        else
+            userRepository.save(userEntity);
+            return uid;
+    }
+    /*登录*/
+    public UserEntity login(String username){
+       return userRepository.findUserEntityByUsername(username);
+
+    }
+    public UserEntity findByUsername(UserEntity userEntity){
+       return userRepository.findUserEntityByUsername(userEntity.getUsername());
     }
 }
