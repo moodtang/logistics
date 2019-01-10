@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    platform : postgres
+    url: jdbc:postgresql://120.79.78.24:5432/logistics?charactorEncoding=utf-8&useSSL=false
+    username: postgres
+    password: tang
+  jpa:
+    show-sql: true
+#    日志中显示sql语句
+    hibernate:
+          ddl-auto: update
+#          自动更新
+server:
+    port: 8889
