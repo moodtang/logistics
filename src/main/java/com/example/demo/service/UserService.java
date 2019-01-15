@@ -55,12 +55,14 @@ public class UserService {
     }
     /*通过用户名查找userEntity
     * */
+    @Transactional
     public UserEntity findByUsername(UserEntity userEntity){
        return userRepository.findUserEntityByUsername(userEntity.getUsername());
     }
     /*
     * 获取用户列表
     * */
+    @Transactional
     public List<UserEntity> getUserList(){
         return userRepository.getUserList();
     }

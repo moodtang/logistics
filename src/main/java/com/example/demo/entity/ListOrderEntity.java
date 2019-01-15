@@ -24,6 +24,7 @@ public class ListOrderEntity {
     private String orderToUser;
     private String remarkToUser;
     private String remarkFromUser;
+    private Integer status;
 
     @Id
     @Column(name = "order_id")
@@ -184,7 +185,15 @@ public class ListOrderEntity {
     public void setRemarkFromUser(String remarkFromUser) {
         this.remarkFromUser = remarkFromUser;
     }
+    @Basic
+    @Column(name = "status")
+    public Integer getStatus() {
+        return status;
+    }
 
+    public void setStatus(Integer remarkFromUser) {
+        this.status = status;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -216,6 +225,8 @@ public class ListOrderEntity {
         if (remarkToUser != null ? !remarkToUser.equals(that.remarkToUser) : that.remarkToUser != null) return false;
         if (remarkFromUser != null ? !remarkFromUser.equals(that.remarkFromUser) : that.remarkFromUser != null)
             return false;
+        if (status != null ? !status.equals(that.status) : that.status != null)
+            return false;
 
         return true;
     }
@@ -238,6 +249,7 @@ public class ListOrderEntity {
         result = 31 * result + (orderToUser != null ? orderToUser.hashCode() : 0);
         result = 31 * result + (remarkToUser != null ? remarkToUser.hashCode() : 0);
         result = 31 * result + (remarkFromUser != null ? remarkFromUser.hashCode() : 0);
+        result = 31 * result + (status != null ? status.hashCode() : 0);
         return result;
     }
 }
