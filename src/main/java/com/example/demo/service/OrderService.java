@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.assist.GetUid;
 import com.example.demo.entity.ListOrderEntity;
 import com.example.demo.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 
 import javax.transaction.Transactional;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 @Service
 public class OrderService {
@@ -51,6 +54,28 @@ public class OrderService {
         }
         else
             return "accept order fail";
+    }
+    /*
+    * 下单
+    * */
+    @Transactional
+    public String addOrder(ListOrderEntity listOrderEntity){
+//       生成订单id
+        GetUid getUid =new GetUid();
+        String orderUid = getUid.getUid();
+//        生成货物id
+        listOrderEntity.setOrderId(orderUid);
+        String goodUid = getUid.getUid();
+        listOrderEntity.setGoodsId(goodUid);
+//        生成时间
+        Date currentTime = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String orderDate = formatter.format(currentTime);
+        listOrderEntity.setOrderDate(orderDate);
+//        设置订单默认状态
+        listOrderEntity.setStatus(0);
+        orderRepository.save(listOrderEntity);
+        return orderUid;
     }
 
 }

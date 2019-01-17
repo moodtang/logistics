@@ -2,8 +2,11 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.ListOrderEntity;
 import com.example.demo.service.OrderService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -73,6 +76,20 @@ public class OrderController {
     public HashMap acceptOrder(ListOrderEntity listOrderEntity) {
         HashMap<String, Object> result = new HashMap<String, Object>();
         result.put("msg",orderService.acceptOrder(listOrderEntity));
+        return result;
+    }
+    /*
+    * 下单
+    * */
+    @ApiOperation(value = "下单",notes = "多个参数")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "", value = "", required = true, dataType = "String"),
+//            @ApiImplicitParam(name = "", value = "", required = true, dataType = "String")
+//    })
+    @PostMapping(value = "addOrder")
+    public HashMap addOrder(ListOrderEntity listOrderEntity){
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("msg",orderService.addOrder(listOrderEntity));
         return result;
     }
 }
