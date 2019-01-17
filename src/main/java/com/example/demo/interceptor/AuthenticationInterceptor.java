@@ -44,34 +44,35 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         //检查有没有需要用户权限的注解
         if (method.isAnnotationPresent(UserLoginToken.class)) {
 
-
                 UserLoginToken userLoginToken = method.getAnnotation(UserLoginToken.class);
                 if (userLoginToken.required()) {
                     // 执行认证
                     if (token == null) {
-//                    return false;
-                        throw new RuntimeException("无token，请重新登录");
+                        System.out.println("无token，请重新登录");
+                        return false;
+//                        throw new RuntimeException("无token，请重新登录");
                     }
                     // 获取 token 中的 user id
                     String userId;
                     try {
                         userId = JWT.decode(token).getAudience().get(0);
                     } catch (JWTDecodeException j) {
-//                    return false;
-                        throw new RuntimeException("401");
+                    return false;
+//                        throw new RuntimeException("401");
                     }
                     UserEntity user = userService.login(userId);
                     if (user == null) {
-//                    return false;
-                        throw new RuntimeException("用户不存在，请重新登录");
+                        System.out.println("用户不存在，请重新登录");
+                        return false;
+//                        throw new RuntimeException("用户不存在，请重新登录");
                     }
                     // 验证 token
                     JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(user.getPassword())).build();
                     try {
                         jwtVerifier.verify(token);
                     } catch (JWTVerificationException e) {
-//                        return false;
-                        throw new RuntimeException("401");
+                        return false;
+//                        throw new RuntimeException("401");
                     }
                     return true;
                 }
