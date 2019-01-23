@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.annotation.UserLoginToken;
+import com.example.demo.assist.FileUtils;
 import com.example.demo.entity.UserEntity;
 import com.example.demo.service.TokenService;
 import com.example.demo.service.UserService;
@@ -8,7 +9,9 @@ import io.swagger.annotations.ApiOperation;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -96,5 +99,15 @@ public class UserController {
     @GetMapping("/getMessage")
     public String getMessage(){
         return "你已通过验证";
+    }
+    /**
+     *
+     * @param file 要上传的文件
+     * @return
+     */
+    @RequestMapping(value = "/fileUpload",method = RequestMethod.POST)
+    public HashMap upload(@RequestParam("fileName") MultipartFile file,@RequestParam("uid") String uid){
+//        头像上传
+        return userService.uploadPicture(file,uid);
     }
 }

@@ -63,8 +63,8 @@ public class OrderService {
 //       生成订单id
         GetUid getUid =new GetUid();
         String orderUid = getUid.getUid();
-//        生成货物id
         listOrderEntity.setOrderId(orderUid);
+        //        生成货物id
         String goodUid = getUid.getUid();
         listOrderEntity.setGoodsId(goodUid);
 //        生成时间

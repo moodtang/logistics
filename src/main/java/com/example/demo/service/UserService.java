@@ -1,12 +1,15 @@
 package com.example.demo.service;
 
+import com.example.demo.assist.FileUtils;
 import com.example.demo.assist.GetUid;
 import com.example.demo.entity.UserEntity;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -65,5 +68,28 @@ public class UserService {
     @Transactional
     public List<UserEntity> getUserList(){
         return userRepository.getUserList();
+    }
+    /*
+    * 头像上传*/
+    public HashMap uploadPicture(MultipartFile file,String uid){
+        HashMap resultMsg =new HashMap();
+        // 要上传的目标文件存放路径
+//        String localPath = "C:/Users/computer/Pictures/Camera Roll";
+        String localPath = "/home/images/pic";
+        // 上传成功或者失败的提示
+    //    String type= file.getContentType();
+        String  tmp = file.getOriginalFilename();
+        //System.out.print("文件类型"+tmp);
+        String filename = uid + "."+tmp.split("\\.")[1];
+        System.out.print("文件"+filename);
+//        if (FileUtils.upload(file, localPath, file.getOriginalFilename())){
+        if (FileUtils.upload(file, localPath, filename)){
+            // 上传成功，给出页面提示
+            resultMsg.put("msg", "upload success");
+        }else {
+            resultMsg.put("msg", "upload fail");
+
+        }
+        return resultMsg;
     }
 }
