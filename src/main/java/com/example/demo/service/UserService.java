@@ -85,7 +85,9 @@ public class UserService {
 //        if (FileUtils.upload(file, localPath, file.getOriginalFilename())){
         if (FileUtils.upload(file, localPath, filename)){
             // 上传成功，给出页面提示
+            userRepository.saveHeadPic(uid,filename);
             resultMsg.put("msg", "upload success");
+
         }else {
             resultMsg.put("msg", "upload fail");
 
