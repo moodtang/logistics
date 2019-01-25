@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,5 +112,54 @@ public class UserController {
     public HashMap upload(@RequestParam("fileName") MultipartFile file,@RequestParam("uid") String uid){
 //        头像上传
         return userService.uploadPicture(file,uid);
+    }
+    /*
+    * 文件下载
+    * */
+    @RequestMapping(value = "/download",method = RequestMethod.GET)
+    public String downloadFile(String imageName,HttpServletRequest request, HttpServletResponse response) {
+       // String fileName = "test.jpg";// 设置文件名，根据业务需要替换成要下载的文件名
+        if (imageName != null) {
+            //设置文件路径
+            String realPath = "C:\\Users\\computer\\Pictures\\Camera Roll";
+   //         String realPath = "/home/images/pic";
+            File file = new File(realPath , imageName);
+            if (file.exists()) {
+                response.setContentType("application/force-download");// 设置强制下载不打开
+                response.addHeader("Content-Disposition", "attachment;fileName=" + imageName);// 设置文件名
+                byte[] buffer = new byte[1024];
+                FileInputStream fis = null;
+                BufferedInputStream bis = null;
+                try {
+                    fis = new FileInputStream(file);
+                    bis = new BufferedInputStream(fis);
+                    OutputStream os = response.getOutputStream();
+                    int i = bis.read(buffer);
+                    while (i != -1) {
+                        os.write(buffer, 0, i);
+                        i = bis.read(buffer);
+                    }
+                   // System.out.println("success");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    if (bis != null) {
+                        try {
+                            bis.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if (fis != null) {
+                        try {
+                            fis.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

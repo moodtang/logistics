@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.assist.GetUid;
+import com.example.demo.entity.InfoGoodsEntity;
 import com.example.demo.entity.ListOrderEntity;
 import com.example.demo.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ public class OrderService {
     /*
      * 获取未接单列表
      * */
+
     @Transactional
     public List<ListOrderEntity> getOrderListNot(){
         return orderRepository.findAllByStatus(0);
@@ -65,8 +67,8 @@ public class OrderService {
         String orderUid = getUid.getUid();
         listOrderEntity.setOrderId(orderUid);
         //        生成货物id
-        String goodUid = getUid.getUid();
-        listOrderEntity.setGoodsId(goodUid);
+//        String goodUid = getUid.getUid();
+//        listOrderEntity.setGoodsId(goodUid);
 //        生成时间
         Date currentTime = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -77,5 +79,6 @@ public class OrderService {
         orderRepository.save(listOrderEntity);
         return orderUid;
     }
+
 
 }

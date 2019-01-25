@@ -12,6 +12,8 @@ public class InfoGoodsEntity {
     private int goodsWeight;
     private String goodsContent;
     private int goodsExpensiveLevel;
+    private String orderId;
+
 
     @Id
     @Column(name = "goods_id")
@@ -75,5 +77,15 @@ public class InfoGoodsEntity {
         result = 31 * result + (goodsContent != null ? goodsContent.hashCode() : 0);
         result = 31 * result + goodsExpensiveLevel;
         return result;
+    }
+
+    @Basic
+    @Column(name = "order_id")
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.InfoGoodsEntity;
 import com.example.demo.entity.ListOrderEntity;
 import com.example.demo.service.OrderService;
 import io.swagger.annotations.ApiImplicitParam;
@@ -81,7 +82,7 @@ public class OrderController {
     /*
     * 下单
     * */
-    @ApiOperation(value = "下单",notes = "订单id，货物id,时间自动生成")
+    @ApiOperation(value = "下单",notes = "订单id，时间自动生成")
 //    @ApiImplicitParams({
 //            @ApiImplicitParam(name = "", value = "", required = true, dataType = "String"),
 //            @ApiImplicitParam(name = "", value = "", required = true, dataType = "String")
@@ -89,7 +90,8 @@ public class OrderController {
     @PostMapping(value = "addOrder")
     public HashMap addOrder(ListOrderEntity listOrderEntity){
         HashMap<String, Object> result = new HashMap<String, Object>();
-        result.put("msg",orderService.addOrder(listOrderEntity));
+        result.put("orderId",orderService.addOrder(listOrderEntity));
         return result;
     }
+
 }
