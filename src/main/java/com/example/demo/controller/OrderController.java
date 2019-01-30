@@ -93,5 +93,36 @@ public class OrderController {
         result.put("orderId",orderService.addOrder(listOrderEntity));
         return result;
     }
+    /*
+     *收货
+     * */
+//    @UserLoginToken
+    @ApiOperation(value = "收货",notes = "orderId")
+    @RequestMapping(value = "/completeOrder", method = RequestMethod.POST)
+    public HashMap completeOrder(String orderId) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("msg",orderService.complete(orderId));
+        return result;
+    }
+    /*
+    * 投诉&评价
+    * */
+    @ApiOperation(value = "投诉,评价",notes = "orderId,msg,标志位int型(1是下单者complain，2是接单者complain，3是下单者remark,4是接单者remark)")
+    @RequestMapping(value = "/complainRemark", method = RequestMethod.POST)
+    public HashMap complaintByFromUser(String orderId,String msg,Integer status) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("msg",orderService.complainRemark(orderId,msg,status));
+        return result;
+    }
+    /*
+    * 用户查看订单
+    * */
+    @ApiOperation(value = "根据下单者和订单状态查询订单",notes = "orderFromUser")
+    @RequestMapping(value = "/getOrderByFromUserStatus", method = RequestMethod.POST)
+    public HashMap getOrderByFromUserStatus(String username,Integer status) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("orderList",orderService.getOrderByFromUserStatus(username,status));
+        return result;
+    }
 
 }

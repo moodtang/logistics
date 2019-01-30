@@ -46,6 +46,13 @@ public class OrderService {
         return orderRepository.findAllByOrderFromUser(username);
     }
     /*
+   * 根据下单者和状态查询订单
+   * */
+    @Transactional
+    public List<ListOrderEntity> getOrderByFromUserStatus(String username,Integer status){
+        return orderRepository.findAllByOrderFromUserAndStatus(username,status);
+    }
+    /*
     * 接单
     * */
     @Transactional
@@ -79,6 +86,41 @@ public class OrderService {
         orderRepository.save(listOrderEntity);
         return orderUid;
     }
-
+    /*
+    * 收货
+    * */
+    @Transactional
+    public String complete(String orderId){
+        if (orderRepository.complete(orderId)>0){
+            return "complete success";
+        }
+        else
+            return "complete fail";
+    }
+    /*
+    *投诉评价
+    * */
+    @Transactional
+    public String complainRemark(String orderId,String msg,Integer status){
+        if (status == null)
+            return "标志位为空";
+        if(status == 1){
+            if (orderRepository.complainFromUser(orderId,msg)>0)
+                return "complain from user success";
+        }
+        if(status == 2){
+            if (orderRepository.complainToUser(orderId,msg)>0)
+                return "complain to user success";
+        }
+        if(status == 3){
+            if (orderRepository.remarkFromUser(orderId,msg)>0)
+                return "remark from user success";
+        }
+        if(status == 4){
+            if (orderRepository.remarkToUser(orderId,msg)>0)
+                return "remark to user success";
+        }
+        return "remark or complain fail";
+    }
 
 }

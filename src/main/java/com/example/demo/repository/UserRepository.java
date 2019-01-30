@@ -22,5 +22,9 @@ public interface UserRepository extends Repository<UserEntity,Integer> {
     @Modifying(clearAutomatically = true)
     @Query("update UserEntity u set u.userHead = ?2 where u.userId = ?1")
     Integer saveHeadPic(String uid,String picUrl);
+    @Transactional
+    UserEntity getUserEntitiesByUserId(String userId);
+    @Transactional
+    UserEntity getUserEntitiesByUsername(String username);
 
 }

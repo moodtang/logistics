@@ -94,4 +94,16 @@ public class UserService {
         }
         return resultMsg;
     }
+    /*
+    * 根据用户id获取用户信息
+    * */
+    public UserEntity getInfoById(String userId){
+        return userRepository.getUserEntitiesByUserId(userId);
+    }
+    /*
+  * 根据用户名获取用户信息
+  * */
+    public UserEntity getInfoByUsername(String username){
+        return userRepository.getUserEntitiesByUsername(username);
+    }
 }

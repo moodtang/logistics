@@ -162,4 +162,26 @@ public class UserController {
         }
         return null;
     }
+        /*
+     *根据id获取用户个人信息
+     * */
+    //    @UserLoginToken
+        @ApiOperation(value = "根据id获取用户个人信息")
+        @RequestMapping(value = "/getInfoById", method = RequestMethod.GET)
+        public HashMap getInfoById(@RequestParam String userId) {
+            HashMap<String, Object> result = new HashMap<String, Object>();
+            result.put("userInfo",userService.getInfoById(userId));
+            return result;
+        }
+    /*
+*根据用户名获取用户个人信息
+* */
+    //    @UserLoginToken
+    @ApiOperation(value = "根据用户名获取用户个人信息")
+    @RequestMapping(value = "/getInfoByUsername", method = RequestMethod.GET)
+    public HashMap getInfoByUsername(@RequestParam String username) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("userInfo",userService.getInfoByUsername(username));
+        return result;
+    }
 }
