@@ -191,7 +191,7 @@ public class ListOrderEntity {
         return status;
     }
 
-    public void setStatus(Integer remarkFromUser) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
     @Override
