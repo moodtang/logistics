@@ -184,4 +184,15 @@ public class UserController {
         result.put("userInfo",userService.getInfoByUsername(username));
         return result;
     }
+
+    /*根据用户名修改密码*/
+    //    @UserLoginToken
+    @ApiOperation(value = "根据用户名修改密码")
+    @RequestMapping(value = "/changePasswordByUsername", method = RequestMethod.POST)
+    public HashMap changePasswordByUsername(@RequestParam String username,String password) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("changePasswordByUsername",userService.changePasswordByUsername(username,password));
+        return result;
+    }
+
 }

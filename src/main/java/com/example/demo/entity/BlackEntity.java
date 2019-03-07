@@ -7,7 +7,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "blacklist", schema = "public", catalog = "logistics")
-public class BlacklistEntity {
+public class BlackEntity {
     private String userId;
     private String username;
 
@@ -36,7 +36,7 @@ public class BlacklistEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        BlacklistEntity that = (BlacklistEntity) o;
+        BlackEntity that = (BlackEntity) o;
 
         if (userId != null ? !userId.equals(that.userId) : that.userId != null) return false;
         if (username != null ? !username.equals(that.username) : that.username != null) return false;

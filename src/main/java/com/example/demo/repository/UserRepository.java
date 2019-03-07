@@ -27,4 +27,9 @@ public interface UserRepository extends Repository<UserEntity,Integer> {
     @Transactional
     UserEntity getUserEntitiesByUsername(String username);
 
+    //根据用户名修改密码
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    @Query("update UserEntity u set u.password = ?2 where u.username = ?1")
+    Integer changePasswordByUsername(String username,String password);
 }

@@ -6,6 +6,7 @@ import com.example.demo.service.OrderService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 @RestController
 @RequestMapping(value = "order")
-public class OrderController {
+public class
+OrderController {
     @Autowired
     private OrderService orderService;
     /*
@@ -26,10 +28,10 @@ public class OrderController {
 //    @UserLoginToken
     @ApiOperation(value = "未接单订单列表",notes = "无参数")
     @RequestMapping(value = "/notAcceptList", method = RequestMethod.GET)
-    public HashMap NotAcceptOrder() {
+    public HashMap NotAcceptOrder(String username) {
         HashMap<String, Object> result = new HashMap<String, Object>();
         List<ListOrderEntity> list = new ArrayList<>();
-        list = orderService.getOrderListNot();
+        list = orderService.getOrderListNot(username);
         result.put("orderList",list);
         return result;
     }
@@ -58,6 +60,28 @@ public class OrderController {
         return result;
     }
     /*
+     * 查询用户当前未完成订单
+     * */
+    @ApiOperation(value = "查询用户当前未完成订单",notes = "orderFromUser,orderToUser,status")
+    @RequestMapping(value = "/getOrderByAllUserAndStatus", method = RequestMethod.POST)
+    public HashMap getOrderByAllUserAndStatus(String orderFromUser,String orderToUser,Integer status) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("orderList",orderService.getOrderByAllUserAndStatus(orderFromUser,orderToUser,status));
+        return result;
+    }
+
+    /*
+     *查询该用户所有订单
+     * */
+//    @UserLoginToken
+    @ApiOperation(value = "查询该用户所有订单",notes = "orderFromUser,orderToUser")
+    @RequestMapping(value = "/findByAllUser", method = RequestMethod.POST)
+    public HashMap getOrderByAllFromUser(String orderFromUser,String orderToUser) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("orderList",orderService.getOrderByAllUser(orderFromUser,orderToUser));
+        return result;
+    }
+    /*
      *根据下单者查询订单
      * */
 //    @UserLoginToken
@@ -68,6 +92,20 @@ public class OrderController {
         result.put("orderList",orderService.getOrderByFromUser(username));
         return result;
     }
+
+    /*
+     *根据接单者查询订单
+     * */
+//    @UserLoginToken
+    @ApiOperation(value = "根据接单者查询订单",notes = "orderToUser")
+    @RequestMapping(value = "/findByToUser", method = RequestMethod.POST)
+    public HashMap getOrderByToUser(String username) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("orderList",orderService.getOrderByToUser(username));
+        return result;
+    }
+
+
     /*
      *接单
      * */
@@ -94,16 +132,30 @@ public class OrderController {
         return result;
     }
     /*
-     *收货
+     *接单方收货
      * */
 //    @UserLoginToken
-    @ApiOperation(value = "收货",notes = "orderId")
-    @RequestMapping(value = "/completeOrder", method = RequestMethod.POST)
-    public HashMap completeOrder(String orderId) {
+    @ApiOperation(value = "接单方收货",notes = "orderId")
+    @RequestMapping(value = "/completeOrderByOrderToUser", method = RequestMethod.POST)
+    public HashMap completeOrderByOrderToUser(String orderId) {
         HashMap<String, Object> result = new HashMap<String, Object>();
-        result.put("msg",orderService.complete(orderId));
+        result.put("msg",orderService.completeByOrderToUser(orderId));
         return result;
     }
+
+
+    /*
+     *发单方收货
+     * */
+//    @UserLoginToken
+    @ApiOperation(value = "发单方收货",notes = "orderId")
+    @RequestMapping(value = "/completeOrderByOrderFromUser", method = RequestMethod.POST)
+    public HashMap completeOrderByOrderFromUser(String orderId) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("msg",orderService.completeByOrderFromUser(orderId));
+        return result;
+    }
+
     /*
     * 投诉&评价
     * */
@@ -114,14 +166,29 @@ public class OrderController {
         result.put("msg",orderService.complainRemark(orderId,msg,status));
         return result;
     }
+
+
+
+
     /*
-    * 用户查看订单
+    * 根据下单者和订单状态查询订单
     * */
     @ApiOperation(value = "根据下单者和订单状态查询订单",notes = "orderFromUser")
     @RequestMapping(value = "/getOrderByFromUserStatus", method = RequestMethod.POST)
     public HashMap getOrderByFromUserStatus(String username,Integer status) {
         HashMap<String, Object> result = new HashMap<String, Object>();
         result.put("orderList",orderService.getOrderByFromUserStatus(username,status));
+        return result;
+    }
+
+    /*
+     * 根据接单者和订单状态查询订单
+     * */
+    @ApiOperation(value = "根据接单者和订单状态查询订单",notes = "orderToUser")
+    @RequestMapping(value = "/getOrderByToUserStatus", method = RequestMethod.POST)
+    public HashMap getOrderByToUserStatus(String username,Integer status) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("orderList",orderService.getOrderByToUserStatus(username,status));
         return result;
     }
 

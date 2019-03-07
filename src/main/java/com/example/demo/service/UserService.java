@@ -106,4 +106,19 @@ public class UserService {
     public UserEntity getInfoByUsername(String username){
         return userRepository.getUserEntitiesByUsername(username);
     }
+    /*
+     * 根据用户名修改密码
+     * */
+    public String changePasswordByUsername(String username,String password) {
+        if (password != null) {
+            if (userRepository.changePasswordByUsername(username, password) > 0) {
+                return "success change password";
+            } else {
+                return "fail change password";
+            }
+        } else {
+                return "密码不能为空";
+        }
+    }
+
 }

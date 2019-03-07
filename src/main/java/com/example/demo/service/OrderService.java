@@ -1,29 +1,59 @@
 package com.example.demo.service;
 
 import com.example.demo.assist.GetUid;
-import com.example.demo.entity.InfoGoodsEntity;
+import com.example.demo.entity.BlackEntity;
 import com.example.demo.entity.ListOrderEntity;
+import com.example.demo.entity.UserEntity;
+import com.example.demo.repository.BlackRepository;
 import com.example.demo.repository.OrderRepository;
+import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 @Service
-public class OrderService {
+public class
+OrderService {
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private BlackRepository blackRepository;
+    @Autowired
+    private UserRepository userRepository;
+   private List<BlackEntity> blackEntities;
+    private List<String> beilahei_username;
+    private  List<ListOrderEntity> listOrderEntities;
     /*
      * 获取未接单列表
      * */
 
     @Transactional
-    public List<ListOrderEntity> getOrderListNot(){
-        return orderRepository.findAllByStatus(0);
+    public List<ListOrderEntity> getOrderListNot(String username) {
+      beilahei_username = new ArrayList<>();
+        //传入拉黑者即当前登陆用户的用户名，得到带有被拉黑人的id,再通过获取用户信息转换成用户名
+        blackEntities= blackRepository.findAllByUsername(username);
+
+        for (int k=0;k<blackEntities.size();k++){
+            beilahei_username.add(userRepository.getUserEntitiesByUserId(blackEntities.get(k).getUserId()).getUsername());
+        }
+
+
+         listOrderEntities=orderRepository.findAllByStatus(0);
+        for (int i =0;i<listOrderEntities.size();i++) {
+            for (int j = 0; j < beilahei_username.size(); j++) {
+                if ((listOrderEntities.get(i).getOrderFromUser()).equals(beilahei_username.get(j))){
+                     listOrderEntities.remove(listOrderEntities.get(i));
+                     break;
+                }
+
+            }
+        }
+        return listOrderEntities;
     }
+
     /*
      * 获取已接单列表
      * */
@@ -31,46 +61,84 @@ public class OrderService {
     public List<ListOrderEntity> getOrderList(){
         return orderRepository.findAllByStatus(1);
     }
+
     /*
-    * 根据订单号查询订单
-    * */
+     * 根据订单号查询订单
+     * */
     @Transactional
-    public ListOrderEntity getOrderById(String orderId){
+    public ListOrderEntity getOrderById(String orderId) {
         return orderRepository.findByOrderId(orderId);
     }
+
+
     /*
-    * 根据下单者查询订单
-    * */
+     * 根据下单者查询订单
+     * */
     @Transactional
-    public List<ListOrderEntity> getOrderByFromUser(String username){
+    public List<ListOrderEntity> getOrderByFromUser(String username) {
         return orderRepository.findAllByOrderFromUser(username);
     }
+
     /*
-   * 根据下单者和状态查询订单
-   * */
+     * 根据接单者查询订单
+     * */
     @Transactional
-    public List<ListOrderEntity> getOrderByFromUserStatus(String username,Integer status){
-        return orderRepository.findAllByOrderFromUserAndStatus(username,status);
+    public List<ListOrderEntity> getOrderByToUser(String username) {
+        return orderRepository.findAllByOrderToUser(username);
     }
     /*
-    * 接单
-    * */
+     * 查询该用户全部订单
+     * */
     @Transactional
-    public String acceptOrder(ListOrderEntity listOrderEntity){
-        if (orderRepository.acceptOrder(listOrderEntity.getOrderToUser(),listOrderEntity.getLevelToUser(),listOrderEntity
-        .getOrderId()) >0){
+    public List<ListOrderEntity> getOrderByAllUser(String orderFromUser,String orderToUser) {
+        return orderRepository.findAllByOrderAllUser(orderFromUser,orderToUser);
+    }
+
+    /*
+     * 查询用户当前未完成订单
+     * */
+    @Transactional
+    public List<ListOrderEntity> getOrderByAllUserAndStatus(String orderFromUser,String orderToUser,Integer status) {
+        return orderRepository.findAllByOrderAllUserAndStatusLessThan(orderFromUser,orderToUser,status);
+    }
+
+    /*
+     * 根据下单者和状态查询订单
+     * */
+    @Transactional
+    public List<ListOrderEntity> getOrderByFromUserStatus(String username, Integer status) {
+        return orderRepository.findAllByOrderFromUserAndStatus(username, status);
+    }
+
+
+    /*
+     * 根据接单者和状态查询订单
+     * */
+    @Transactional
+    public List<ListOrderEntity> getOrderByToUserStatus(String username, Integer status) {
+        return orderRepository.findAllByOrderToUserAndStatus(username, status);
+    }
+
+
+    /*
+     * 接单
+     * */
+    @Transactional
+    public String acceptOrder(ListOrderEntity listOrderEntity) {
+        if (orderRepository.acceptOrder(listOrderEntity.getOrderToUser(), listOrderEntity.getLevelToUser(), listOrderEntity
+                .getOrderId()) > 0) {
             return "accept order success";
-        }
-        else
+        } else
             return "accept order fail";
     }
+
     /*
-    * 下单
-    * */
+     * 下单
+     * */
     @Transactional
-    public String addOrder(ListOrderEntity listOrderEntity){
+    public String addOrder(ListOrderEntity listOrderEntity) {
 //       生成订单id
-        GetUid getUid =new GetUid();
+        GetUid getUid = new GetUid();
         String orderUid = getUid.getUid();
         listOrderEntity.setOrderId(orderUid);
         //        生成货物id
@@ -86,17 +154,34 @@ public class OrderService {
         orderRepository.save(listOrderEntity);
         return orderUid;
     }
+
     /*
-    * 收货
-    * */
+     * 接单方收货
+     * */
     @Transactional
-    public String complete(String orderId){
-        if (orderRepository.complete(orderId)>0){
-            return "complete success";
+    public String completeByOrderToUser(String orderId) {
+
+        if (orderRepository.completeByOrderToUser(orderId) > 0) {
+            return "orderToUser complete success";
+        } else {
+            return "orderToUser complete fail";
         }
-        else
-            return "complete fail";
     }
+
+    /*
+     * 发单方收货
+     * */
+    @Transactional
+    public String completeByOrderFromUser(String orderId) {
+
+        if (orderRepository.completeByOrderFromUser(orderId) > 0) {
+            return "orderFromUser complete success";
+        } else {
+            return "orderFromUser complete fail";
+        }
+    }
+
+
     /*
     *投诉评价
     * */
