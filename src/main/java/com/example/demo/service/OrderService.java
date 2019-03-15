@@ -70,6 +70,22 @@ OrderService {
         return orderRepository.findByOrderId(orderId);
     }
 
+    /*
+     * 根据订单号和状态为0查询订单
+     * */
+    @Transactional
+    public ListOrderEntity getOrderByIdAndStatus(String orderId,Integer status) {
+        return orderRepository.findByOrderIdAndStatus(orderId,status);
+    }
+
+
+    /*
+     * 根据下单者和状态为0查询订单
+     * */
+    @Transactional
+    public List<ListOrderEntity> getOrderByFromUserAndStatus(String username,Integer status) {
+        return orderRepository.findAllByOrderFromUserAndByStatus(username,status);
+    }
 
     /*
      * 根据下单者查询订单
