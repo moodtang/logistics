@@ -70,6 +70,20 @@ OrderController {
         result.put("orderList",orderService.getOrderById(orderId));
         return result;
     }
+
+    /*
+     *根据订单号查询状态为0的订单
+     * */
+//    @UserLoginToken
+    @ApiOperation(value = "根据订单号查询状态为0的订单",notes = "orderId")
+    @RequestMapping(value = "/findByIdAndStatus", method = RequestMethod.POST)
+    public HashMap getOrderByIdAndStatus(String orderId) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("orderList",orderService.getOrderByIdAndStatus(orderId,0));
+        return result;
+    }
+
+
     /*
      * 查询用户当前未完成订单
      * */
@@ -92,6 +106,19 @@ OrderController {
         result.put("orderList",orderService.getOrderByAllUser(orderFromUser,orderToUser));
         return result;
     }
+    /*
+     *根据下单者和状态为0查询订单
+     * */
+//    @UserLoginToken
+    @ApiOperation(value = "根据下单者和状态为0查询订单",notes = "orderFromUser")
+    @RequestMapping(value = "/findByFromUserAndStatus", method = RequestMethod.POST)
+    public HashMap getOrderByFromUserAndStatus(String username) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("orderList",orderService.getOrderByFromUserAndStatus(username,0));
+        return result;
+    }
+
+
     /*
      *根据下单者查询订单
      * */

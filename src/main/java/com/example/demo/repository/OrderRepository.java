@@ -11,6 +11,7 @@ import java.util.List;
 public interface OrderRepository extends Repository<ListOrderEntity,Integer> {
     List<ListOrderEntity> findAllByStatus(Integer status);
     ListOrderEntity findByOrderId(String OrderId);
+    ListOrderEntity findByOrderIdAndStatus(String OrderId,Integer status);
 
     @Query("select o from ListOrderEntity  o  where o.orderFromUser = ?1 or o.orderToUser = ?2 order by o.orderDate")
     List<ListOrderEntity> findAllByOrderAllUser(String orderFromUser,String orderToUser);
@@ -18,6 +19,11 @@ public interface OrderRepository extends Repository<ListOrderEntity,Integer> {
 
     @Query("select o from ListOrderEntity  o  where (o.orderFromUser = ?1 or o.orderToUser = ?2)and o.status < ?3 order by o.orderDate")
     List<ListOrderEntity> findAllByOrderAllUserAndStatusLessThan(String orderFromUser,String orderToUser,Integer status);
+
+
+    @Query("select o from ListOrderEntity  o  where o.orderFromUser = ?1 and o.status = ?2 order by o.orderDate")
+    List<ListOrderEntity> findAllByOrderFromUserAndByStatus(String orderFromUser,Integer status);
+
 
     @Query("select o from ListOrderEntity  o  where o.orderFromUser = ?1 order by o.orderDate")
     List<ListOrderEntity> findAllByOrderFromUser(String orderFromUser);
