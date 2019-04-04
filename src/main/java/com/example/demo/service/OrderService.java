@@ -207,5 +207,15 @@ OrderService {
         }
         return "remark or complain fail";
     }
+    public List<ListOrderEntity> getAllOrderList(){
+        return  orderRepository.getAllList();
+    }
+//    删除订单
+    public String deleteOrder(String id){
+        if (orderRepository.deleteByOrderId(id)>0){
+            return "删除订单成功";
+        }
+        return "删除订单失败";
+    }
 
 }

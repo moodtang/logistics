@@ -52,6 +52,12 @@ public interface OrderRepository extends Repository<ListOrderEntity,Integer> {
 
     List<ListOrderEntity> findAllByOrderFromUserAndStatus(String orderFromUser,Integer status);
     List<ListOrderEntity> findAllByOrderToUserAndStatus(String orderFromUser,Integer status);
+    @Modifying(clearAutomatically = true)
+    @Query("select o from ListOrderEntity o order by o.orderDate")
+    List<ListOrderEntity> getAllList();
+    @Modifying(clearAutomatically = true)
+    @Transactional
+    Integer deleteByOrderId(String orderId);
 
 
 }

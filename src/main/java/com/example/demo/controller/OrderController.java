@@ -8,10 +8,8 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.repository.query.Param;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +20,19 @@ public class
 OrderController {
     @Autowired
     private OrderService orderService;
+    /*
+   *获取订单列表
+   * */
+//    @UserLoginToken
+    @ApiOperation(value = "订单列表",notes = "无参数")
+    @RequestMapping(value = "/allOrderList", method = RequestMethod.GET)
+    public HashMap allOrderList() {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        List<ListOrderEntity> list = new ArrayList<>();
+        list = orderService.getAllOrderList();
+        result.put("orderList",list);
+        return result;
+    }
     /*
      *获取未接单订单列表
      * */
@@ -191,5 +202,14 @@ OrderController {
         result.put("orderList",orderService.getOrderByToUserStatus(username,status));
         return result;
     }
-
+    /*
+       * 根据id删除订单
+       * */
+    @ApiOperation(value = "根据id删除订单",notes = "")
+    @RequestMapping(value = "/deleteOrder", method = RequestMethod.POST)
+    public HashMap deleteOrder(@RequestParam ("orderId")String orderId) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("msg",orderService.deleteOrder(orderId));
+        return result;
+    }
 }

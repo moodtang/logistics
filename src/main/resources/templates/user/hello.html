@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>物流管理系统首页</title>
+    <!-- 新 Bootstrap4 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- popper.min.js 用于弹窗、提示、下拉菜单 -->
+    <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+
+    <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+
+    <!--font-awesome图标字体库和css框架-->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+
+    <style type="text/css">
+        .styleLeftMargin {
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+        .styleSearch {
+            margin: 20px;
+            color: aqua;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+        <a class="navbar-brand" href="#">物流管理系统</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="hidePage(1)">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="hidePage(2)">订单</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="card" id="onePage">
+        <div class="table-responsive card bg-light text-dark">
+            <div class="input-group-append styleSearch">
+                <input type="text" class="form-control" placeholder="按用户名查找" id="getUsername">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit" onclick="searchUser()">search</button>
+                    <button class="btn btn-info" type="submit" onclick="reset()">reset</button>
+                </div>
+            </div>
+            <br>
+            <table class="table">
+                <thead>
+                <tr class="row">
+                    <th class="col-sm-3  styleLeftMargin">用户id</th>
+                    <th class="col-sm-1  styleLeftMargin">用户名</th>
+                    <th class="col-sm-2 styleLeftMargin">号码</th>
+                    <th class="col-sm-1 styleLeftMargin">积分</th>
+                    <th class="col-sm-1 styleLeftMargin">等级</th>
+                    <th class="col-sm-3 styleLeftMargin">操作</th>
+                </tr>
+                </thead>
+                <tbody id="tbMain">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card" id="twoPage">
+        <div id="demo" class="carousel slide" data-ride="carousel" style="background-position:center">
+
+            <!-- 指示符 -->
+            <ul class="carousel-indicators">
+                <li data-target="#demo" data-slide-to="0" class="active"></li>
+                <li data-target="#demo" data-slide-to="1"></li>
+                <li data-target="#demo" data-slide-to="2"></li>
+            </ul>
+
+            <!-- 轮播图片 -->
+            <div class="carousel-inner" style="background-position:center;height: 600px">
+                <div class="carousel-item active" style="background-position:center">
+                    <img src="http://120.79.78.24:8088/pic/IMG_101.jpg" style="width: 100%">
+                </div>
+                <div class="carousel-item" style="background-position:center">
+                    <img src="http://120.79.78.24:8088/pic/IMG_102.jpg" style="width: 100%" >
+                </div>
+                <div class="carousel-item" style="background-position:center">
+                    <img src="http://120.79.78.24:8088/pic/IMG_103.jpg" style="width: 100%">
+                </div>
+            </div>
+
+            <!-- 左右切换按钮 -->
+            <a class="carousel-control-prev" href="#demo" data-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </a>
+            <a class="carousel-control-next" href="#demo" data-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </a>
+
+        </div>
+        <br>
+        <div >
+            <div class="dropdown styleLeftMargin">
+                <button type="button" class="btn btn-primary dropdown-toggle styleLeftMargin" data-toggle="dropdown" id="role" style="width: 60%">
+                    内容角色切换
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" onclick="getFromUser()">发单者评论</a>
+                    <a class="dropdown-item" onclick="getToUser()">接单者评论</a>
+                    <a class="dropdown-item" onclick="orderDetails()">订单详情</a>
+                </div>
+            </div>
+            <br>
+            <ul class="list-group" id="ulItem">
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    var per = [];
+    var userFromMsg = [];
+    var orderDetailsMsg = [];
+    /*初始化列表*/
+    window.onload = getUserList();
+    function getUserList() {
+        hidePage(1);
+        $.get("/user/list", function (data, status) {
+            per = data.userList
+//          alert("数据: " + per + "\n状态: " + status);
+            var tbody = document.getElementById('tbMain');
+
+            for (var i = 0; i < per.length; i++) { //遍历一下json数据  
+                var trow = getDataRow(per[i]) //定义一个方法,返回tr数据  
+                tbody.appendChild(trow);
+//                console.log(per[i])
+            }
+        });
+    }
+    <!--      创建列表  -->
+    function getDataRow(h) {
+        var row = document.createElement('tr'); //创建行  
+        row.setAttribute("class", "row")
+        var idCell = document.createElement('td'); //创建第一列id  
+        idCell.innerHTML = h[0]; //填充数据  
+        idCell.setAttribute("class", "col-sm-3  styleLeftMargin")
+        row.appendChild(idCell); //加入行  ，下面类似  
+
+        var nameCell = document.createElement('td');//创建第二列name  
+        nameCell.innerHTML = h[1];
+        nameCell.setAttribute("class", "col-sm-1 styleLeftMargin")
+        row.appendChild(nameCell);
+
+        var jobCell = document.createElement('td');//创建第三列电话号码  
+        jobCell.innerHTML = h[2];
+        jobCell.setAttribute("class", "col-sm-2  styleLeftMargin")
+        row.appendChild(jobCell);
+
+        var score = document.createElement('td');//创建第四列  
+        score.innerHTML = h[3];
+        score.setAttribute("class", "col-sm-1  styleLeftMargin")
+        row.appendChild(score);
+
+        var level = document.createElement('td');//创建第5列  
+        level.innerHTML = h[4];
+        level.setAttribute("class", "col-sm-1  styleLeftMargin")
+        row.appendChild(level);
+
+        //到这里，json中的数据已经添加到表格中，下面为每行末尾添加删除按钮  
+
+        var delCell = document.createElement('td');//创建第6列，操作列  
+        row.appendChild(delCell);
+        delCell.setAttribute("class", "col-sm-3 styleLeftMargin")
+        var btnDel = document.createElement('input'); //创建一个input控件  
+        btnDel.setAttribute('type', 'button'); //type="button"  
+        btnDel.setAttribute('value', '删除');
+        btnDel.setAttribute("class", "btn btn-danger styleLeftMargin")
+
+        //删除操作  
+        btnDel.onclick = function () {
+            if (confirm("确定删除该用户嘛？")) {
+                //找到按钮所在行的节点，然后删掉这一行  
+                var id = this.parentNode.parentNode.textContent.substring(0, 32);
+                console.log(id)
+                deleteuser(id);
+                this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);
+                //btnDel - td - tr - tbody - 删除(tr)  
+                //刷新网页还原。实际操作中，还要删除数据库中数据，实现真正删除  
+
+            }
+        }
+        var upgrade = document.createElement('input'); //创建一个input控件  
+        upgrade.setAttribute('type', 'button'); //type="button"  
+        upgrade.setAttribute('value', '升级');
+        upgrade.setAttribute("class", "btn btn-success styleLeftMargin")
+        //升级操作  
+        upgrade.onclick = function () {
+            if (confirm("确定对该用户提升用户等级嘛？")) {
+                var id = this.parentNode.parentNode.textContent.substring(0, 32);
+                console.log(id)
+                upgradeUser(id);  
+
+            }
+        }
+        var downgrade = document.createElement('input'); //创建一个input控件  
+        downgrade.setAttribute('type', 'button'); //type="button"  
+        downgrade.setAttribute('value', '降级');
+        downgrade.setAttribute("class", "btn btn-warning styleLeftMargin")
+        //降级操作  
+        downgrade.onclick = function () {
+            if (confirm("确定对该用户降低用户等级嘛？")) {
+                var id = this.parentNode.parentNode.textContent.substring(0, 32);
+                console.log(id)
+                downgradeUser(id);
+
+            }
+        }
+        delCell.appendChild(btnDel);  //把删除按钮加入td，别忘了  
+        delCell.appendChild(downgrade)
+        delCell.appendChild(upgrade);
+
+        return row; //返回tr数据      
+    }
+    //删除用户
+    function deleteuser(msg) {
+        $.post("/user/delete",
+            {
+                username: msg,
+            },
+            function (data, status) {
+                alert("删除用户" + "\n状态: " + status);
+            });
+    }
+    //升级用户
+    function upgradeUser(msg) {
+        $.post("/user/upgrade",
+            {
+                userId: msg,
+            },
+            function (data, status) {
+                alert("升级用户" + "\n状态: " + status);
+                if (status === "success") {
+                    $("#tbMain").empty();
+                    getUserList();
+                }
+            });
+    }
+    //降级
+    function downgradeUser(msg) {
+        $.post("/user/downgrade",
+            {
+                userId: msg,
+            },
+            function (data, status) {
+                alert("降低用户等级" + "\n状态: " + status);
+                if (status === "success") {
+                    $("#tbMain").empty();
+                    getUserList();
+                }
+            });
+    }
+    /*搜索用户*/
+    function searchUser() {
+        var username = document.getElementById("getUsername").value;
+        $.get("/user/getUserInfoByUsername",
+            {
+                username: username,
+            },
+            function (data, status) {
+                alert("根据用户名查找用户 \n" + "\n状态: " + status);
+                per = data.userInfo
+                if (status === "success") {
+                    $("#tbMain").empty();
+                }
+                var tbody = document.getElementById('tbMain');
+                for (var i = 0; i < per.length; i++) { //遍历一下json数据  
+                    var trow = getDataRow(per[i]) //定义一个方法,返回tr数据  
+                    tbody.appendChild(trow);
+                    console.log(per[i])
+                }
+            });
+    }
+    /*
+     * 重置*/
+    function reset() {
+        $("#tbMain").empty();
+        getUserList();
+    }
+    /*隐藏*/
+    function hidePage(pageNum) {
+        if(pageNum === 1){
+            $("#onePage").show();
+            $("#twoPage").hide();
+        }
+        if(pageNum === 2){
+            $("#onePage").hide();
+            $("#twoPage").show();
+            getFromUser()
+        }
+    }
+//   评论item创建
+    function itemCreate() {
+        var ulItem = document.getElementById('ulItem');
+        for (var i = 0; i < userFromMsg.length; i++) { //遍历一下json数据  
+            var urow = detailItem(userFromMsg[i]) //定义一个方法,返回tr数据 
+//            console.log(userFromMsg[i])//  
+            ulItem.appendChild(urow);
+        }
+    }
+//    评论item创建详细信息
+    function detailItem(contentsItem) {
+        var brDiv = document.createElement('br');
+        brDiv.innerHTML = "<br/>";
+        var row = document.createElement('li'); //创建行  
+        row.setAttribute("class", "list-group-item card")
+        row.setAttribute("style","width:100%")
+        /*创建第一行订单id显示*/
+        var orderId = document.createElement('div'); //创建第一列id  
+        orderId.innerHTML ="orderId:"+ contentsItem[0]; //填充数据  
+        orderId.setAttribute("class", "row styleLeftMargin")
+        orderId.setAttribute("style","color:#4D4D4D")
+        row.appendChild(orderId); //加入行  
+        /*创建第二行下单者remark显示*/
+        var msg = document.createElement('div'); //创建第二列下单者  
+        msg.setAttribute("class", "row styleLeftMargin")
+        var msgLeft = document.createElement('div'); //头像和name创建  
+        msgLeft.setAttribute("class", " styleLeftMargin")
+        msgLeft.setAttribute("style", "float:left")
+        var headImage = document.createElement('img');
+        headImage.setAttribute("class","row")
+        if(contentsItem[2] === null){
+            contentsItem[2] = "test.jpg"
+        }
+        var url = "http://120.79.78.24:8088/pic/"+ contentsItem[2]
+        headImage.setAttribute("src",url)//图片地址设置
+        headImage.setAttribute("class","rounded-circle");//圆角设置
+        headImage.setAttribute("alt","Cinque Terre");
+        headImage.setAttribute("style","height: 50px; width: 50px;");//头像大小设置
+        //name显示
+        var name = document.createElement('span');
+        name.setAttribute("style","color:#8968CD")
+        name.setAttribute("class","row styleLeftMargin")
+        name.innerHTML = contentsItem[1];
+//        头像，换行，name添加
+        msgLeft.appendChild(headImage);
+        msgLeft.appendChild(brDiv)
+        msgLeft.appendChild(name);
+        var msgRight = document.createElement('div'); //评论  
+        msgRight.setAttribute("class", "styleLeftMargin")
+        msgRight.setAttribute("style", "float:right")
+        var remark = document.createElement('span');
+        remark.innerHTML = "remark:"+ contentsItem[3]
+        remark.setAttribute("style","color:#8A2BE2")
+        var complain = document.createElement('span');
+        complain.innerHTML ="complain:"+contentsItem[4]
+        complain.setAttribute("style","color:#8B008B")
+        msgRight.appendChild(remark);
+        msgRight.appendChild(brDiv);
+        msgRight.appendChild(complain)
+        msg.appendChild(msgLeft);
+        msg.appendChild(msgRight);
+        row.appendChild(msg)  
+        return row
+    }
+    function getFromUser() {
+        var role = document.getElementById("role");
+        role.innerHTML = "发单者评论"
+        $.get("/user/getFromUser",
+            function (data, status) {
+//                alert("get remark" + "\n状态: " + status);
+                if (status === "success") {
+                    $("#ulItem").empty();
+                    userFromMsg = data.msg
+                    itemCreate();
+                }
+            });
+    }
+    function getToUser() {
+        var role = document.getElementById("role");
+        role.innerHTML = "接单者评论"
+        $.get("/user/getToUser",
+            function (data, status) {
+//                alert("to get remark" + "\n状态: " + status);
+                if (status === "success") {
+                    $("#ulItem").empty();
+                    userFromMsg = data.msg
+                    itemCreate();
+                }
+            });
+    }
+//    订单详情的创建
+    function orderDetails() {
+        var role = document.getElementById("role");
+        role.innerHTML = "订单详情"
+        $.get("/order/allOrderList",
+            function (data, status) {
+//                alert("to get remark" + "\n状态: " + status);
+                if (status === "success") {
+                    $("#ulItem").empty();
+                    orderDetailsMsg = data.orderList
+                    orderCreated();
+                }
+            });
+    }
+//    订单创建
+    function orderCreated() {
+        var ulItem = document.getElementById('ulItem');
+//        搜索框的创建
+        var search = document.createElement('div');
+        search.setAttribute("class","row input-group-append styleSearch");
+        var inputMsg = document.createElement('input');
+        inputMsg.setAttribute("type","text");
+        inputMsg.setAttribute("class","form-control input-group-append");
+        inputMsg.setAttribute("style","width:60%;float:left")
+        inputMsg.setAttribute("placeholder","根据订单号查询")
+        inputMsg.setAttribute("id","getOrderId");
+
+        var btnSearch = document.createElement('button')
+        btnSearch.setAttribute("class","btn btn-primary input-group-append")
+        btnSearch.setAttribute("style","float:left")
+        btnSearch.innerHTML="search";
+        btnSearch.onclick = function () {
+            //                    清空之前查询的order
+            $("#content").empty();
+            var brDiv = document.createElement('div');
+            brDiv.setAttribute("style","background:aqua;height:10px;width:100%;margin-left:10px");
+//            brDiv.innerHTML = "<br/>";
+            var tmp = document.getElementById("getOrderId").value;
+            for(var i=0;i<orderDetailsMsg.length;i++){
+                if(orderDetailsMsg[i].orderId === tmp){
+                    var searchContent = detailItemOrder(orderDetailsMsg[i])
+                    content.appendChild(searchContent);
+                    content.appendChild(brDiv);
+                    console.log(tmp)
+                }
+            }
+
+        }
+        search.appendChild(inputMsg);
+        search.appendChild(btnSearch);
+        ulItem.appendChild(search);
+        var content = document.createElement('div');
+        content.setAttribute("id","content");
+//        content.setAttribute("style","background:#666666")
+        ulItem.appendChild(content);
+
+//        往列表填入数据
+        for (var i = 0; i < orderDetailsMsg.length; i++) { //遍历一下json数据  
+            var urow = detailItemOrder(orderDetailsMsg[i]) //定义一个方法,返回tr数据 
+            ulItem.appendChild(urow);
+        }
+    }
+//    order item 创建细节
+    function detailItemOrder(contentsItem) {
+        var brDiv = document.createElement('br');
+        brDiv.innerHTML = "<br/>";
+        var row = document.createElement('li'); //创建行  
+        row.setAttribute("class", "row list-group-item card styleLeftMargin")
+        row.setAttribute("style","width:100%")
+        /*创建div显示*/
+        var content = document.createElement('div'); //创建第一列id  
+        content.setAttribute("class", "row")
+        var orderId = document.createElement('div');
+        orderId.innerHTML ="orderId:"+ contentsItem.orderId; //填充数据  
+        orderId.setAttribute("class", "col styleLeftMargin")
+        content.appendChild(orderId); //加入 
+
+        var requireMethod = document.createElement('div'); 
+        requireMethod.innerHTML ="requireMethod:"+ contentsItem.requireMethod; 
+        requireMethod.setAttribute("class", "col styleLeftMargin")
+        content.appendChild(requireMethod); //加入 
+
+        var requireLevel = document.createElement('div');
+        requireLevel.innerHTML ="requireLevel:"+ contentsItem.requireLevel;
+        requireLevel.setAttribute("class", "col styleLeftMargin")
+        content.appendChild(requireLevel); //加入 
+
+        var requireTime = document.createElement('div');
+        requireTime.innerHTML ="requireTime:"+ contentsItem.requireTime;
+        requireTime.setAttribute("class", "col styleLeftMargin")
+        content.appendChild(requireTime);
+
+        var orderDate = document.createElement('div');
+        orderDate.innerHTML ="orderDate:"+ contentsItem.orderDate;
+        orderDate.setAttribute("class", "col styleLeftMargin")
+        content.appendChild(orderDate);
+
+        var addressFromUser = document.createElement('div');
+        addressFromUser.innerHTML ="addressFromUser:"+ contentsItem.addressFromUser;
+        addressFromUser.setAttribute("class", "col styleLeftMargin")
+        content.appendChild(addressFromUser);
+
+        var addressToUser = document.createElement('div');
+        addressToUser.innerHTML ="addressToUser:"+ contentsItem.addressToUser;
+        addressToUser.setAttribute("class", "col styleLeftMargin")
+        content.appendChild(addressToUser);
+
+        var orderFromUser = document.createElement('div');
+        orderFromUser.innerHTML ="orderFromUser:"+ contentsItem.orderFromUser;
+        orderFromUser.setAttribute("class", "col styleLeftMargin")
+        orderFromUser.setAttribute("style","color:#9F55FF")
+        content.appendChild(orderFromUser);
+
+        var orderToUser = document.createElement('div');
+        orderToUser.innerHTML ="orderToUser:"+ contentsItem.orderToUser;
+        orderToUser.setAttribute("class", "col styleLeftMargin")
+        orderToUser.setAttribute("style","color:#9F55FF")
+        content.appendChild(orderToUser);
+
+        var statusOrder = document.createElement('div');
+        statusOrder.innerHTML ="statusOrder:"+ contentsItem.status;
+        statusOrder.setAttribute("class", "col styleLeftMargin")
+        content.appendChild(statusOrder);
+
+        var delBtn = document.createElement('button');
+        delBtn.innerHTML ="删除"
+        delBtn.setAttribute("class", "btn btn-danger styleLeftMargin")
+        content.appendChild(delBtn);
+        delBtn.onclick = function () {
+            if (confirm("确定删除该订单嘛？")) {
+                //找到按钮所在行的节点，然后删掉这一行  
+                var id = this.parentNode.parentNode.textContent.substring(8, 40);
+                console.log(id)
+                deleteOrder(id);
+                this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);
+                //btnDel - td - tr - tbody - 删除(tr)  
+                //刷新网页还原。实际操作中，还要删除数据库中数据，实现真正删除  
+
+            }
+        }
+        row.appendChild(content);
+        return row;
+    }
+//    删除订单
+    function deleteOrder(id) {
+        $.post("/order/deleteOrder",{
+            orderId:id
+            },
+            function (data, status) {
+                alert(data.msg+ "\n状态: " + status);
+//                if (status === "success") {
+//
+//                }
+            });
+
+    }
+</script>
+
+</html>
