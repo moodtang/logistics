@@ -50,8 +50,8 @@ public class UserController {
         return  result;
     }
     //登录
-    @ApiOperation(value = "登录")
-    @PostMapping("/login")
+    @ApiOperation(value = "登录")   //swagger文档 API说明
+    @PostMapping("/login")        //只接受post 请求方式
     public HashMap login(UserEntity user) {
         UserEntity userForBase=userService.findByUsername(user);
         HashMap tokenUser = new HashMap();

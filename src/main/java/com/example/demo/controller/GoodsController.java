@@ -31,6 +31,7 @@ public class GoodsController {
     @PostMapping(value = "addGoods")
     public List addGoods(@RequestBody List<InfoGoodsEntity> infoGoodsEntitys){
         List<String> list = new ArrayList();
+
         infoGoodsEntitys.forEach(infoGoodsEntity -> {
             list.add(goodService.addGoodsInfo(infoGoodsEntity));
         });
