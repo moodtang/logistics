@@ -16,20 +16,42 @@ public interface UserRepository extends Repository<UserEntity,Integer> {
     UserEntity findUserEntityByUserPhone(String userPhone);
      void  save(UserEntity userEntity);
      int deleteUserEntityByUsername(String username);
-    @Query("select userId, username,userPhone from UserEntity ")
+    int deleteUserEntityByUserId(String userId);
+    @Query("select userId, username,userPhone,creditScore,userLevel from UserEntity order by creditScore")
      List<UserEntity> getUserList();
     @Transactional
     @Modifying(clearAutomatically = true)
     @Query("update UserEntity u set u.userHead = ?2 where u.userId = ?1")
     Integer saveHeadPic(String uid,String picUrl);
+//    升级
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    @Query("update UserEntity u set u.userLevel = u.userLevel+1 where u.userId = ?1")
+    Integer upgradeUser(String uid);
+//降级
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    @Query("update UserEntity u set u.userLevel = u.userLevel-1 where u.userId = ?1")
+    Integer downgradeUser(String uid);
+//   更新信誉积分
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    @Query("update UserEntity u set u.userLevel = ?3 ,u.creditScore = ?2 where u.username = ?1")
+    Integer setUserScore(String username,int score,int userLevel);
     @Transactional
     UserEntity getUserEntitiesByUserId(String userId);
     @Transactional
     UserEntity getUserEntitiesByUsername(String username);
-
+    @Transactional
+    @Query("select u.userId, u.username,u.userPhone,u.creditScore,u.userLevel from UserEntity u  where u.username = ?1")
+    List getUserInfoByUsername(String username);
     //根据用户名修改密码
     @Transactional
     @Modifying(clearAutomatically = true)
     @Query("update UserEntity u set u.password = ?2 where u.username = ?1")
     Integer changePasswordByUsername(String username,String password);
+    @Query("select o.orderId,u.username,u.userHead,o.remarkFromUser,o.complaintFromUser from UserEntity u ,ListOrderEntity o where o.orderFromUser =u.username")
+    List getComplain();
+    @Query("select o.orderId,u.username,u.userHead,o.remarkToUser,o.complaintToUser from UserEntity u ,ListOrderEntity o where o.orderToUser =u.username")
+    List getComplain1();
 }

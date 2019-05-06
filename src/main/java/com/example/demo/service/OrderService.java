@@ -141,11 +141,15 @@ OrderService {
      * */
     @Transactional
     public String acceptOrder(ListOrderEntity listOrderEntity) {
-        if (orderRepository.acceptOrder(listOrderEntity.getOrderToUser(), listOrderEntity.getLevelToUser(), listOrderEntity
-                .getOrderId()) > 0) {
-            return "accept order success";
-        } else
-            return "accept order fail";
+        if (listOrderEntity.getRequireLevel() <= listOrderEntity.getLevelToUser()) {
+            if (orderRepository.acceptOrder(listOrderEntity.getOrderToUser(), listOrderEntity.getLevelToUser(), listOrderEntity
+                    .getOrderId()) > 0) {
+                return "accept order success";
+            } else
+                return "accept order fail";
+        }
+        else
+            return "your level is too low to take job ";
     }
 
     /*
@@ -202,14 +206,23 @@ OrderService {
     *投诉评价
     * */
     @Transactional
-    public String complainRemark(String orderId,String msg,Integer status){
+    public String complainRemark(String orderId,String msg,Integer status,Integer grade){
+//        下单者complain ，对象是接单者
+        ListOrderEntity listOrderEntity = new ListOrderEntity();
+        listOrderEntity = orderRepository.findByOrderId(orderId);
+        UserEntity userFrom = new UserEntity();
+        UserEntity userTo = new UserEntity();
+        userFrom =  userRepository.findUserEntityByUsername(listOrderEntity.getOrderFromUser());
+        userTo = userRepository.findUserEntityByUsername(listOrderEntity.getOrderToUser());
         if (status == null)
             return "标志位为空";
         if(status == 1){
+            changeScore(userFrom,userTo,grade);
             if (orderRepository.complainFromUser(orderId,msg)>0)
                 return "complain from user success";
         }
         if(status == 2){
+            changeScore(userTo,userFrom,grade);
             if (orderRepository.complainToUser(orderId,msg)>0)
                 return "complain to user success";
         }
@@ -222,6 +235,31 @@ OrderService {
                 return "remark to user success";
         }
         return "remark or complain fail";
+    }
+    public List<ListOrderEntity> getAllOrderList(){
+        return  orderRepository.getAllList();
+    }
+//    删除订单
+    public String deleteOrder(String id){
+        if (orderRepository.deleteByOrderId(id)>0){
+            return "删除订单成功";
+        }
+        return "删除订单失败";
+    }
+    public void changeScore(UserEntity entity1, UserEntity entity2, int grade){
+        int score = 0 ,level  = 0;
+        score = entity2.getCreditScore();
+        level =entity1.getUserLevel();
+        int finalLevel = 0;
+        if (grade == 5){
+            score = score+1;
+        }
+        if (grade < 3 && level >2){
+            score = score - 1;
+        }
+        finalLevel = score/100;
+        userRepository.setUserScore(entity2.getUsername(),score,finalLevel);
+
     }
 
 }

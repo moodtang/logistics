@@ -1,24 +1,21 @@
 package com.example.demo.controller;
 
 import com.example.demo.annotation.UserLoginToken;
-import com.example.demo.assist.FileUtils;
 import com.example.demo.entity.UserEntity;
 import com.example.demo.service.TokenService;
 import com.example.demo.service.UserService;
 import io.swagger.annotations.ApiOperation;
-import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by computer on 2019/1/8.
@@ -36,8 +33,8 @@ public class UserController {
     * */
     @ApiOperation(value = "")
     @RequestMapping(value = "/hello", method = RequestMethod.GET)
-    public String HelloWorld() {
-        return "Hello World!";
+    public ModelAndView HelloWorld() {
+        return new ModelAndView("user/hello");
     }
     /*
     *  注册
@@ -184,6 +181,14 @@ public class UserController {
         result.put("userInfo",userService.getInfoByUsername(username));
         return result;
     }
+    //    @UserLoginToken
+    @ApiOperation(value = "web端根据用户名查找用户")
+    @RequestMapping(value = "/getUserInfoByUsername", method = RequestMethod.GET)
+    public HashMap getUserInfoByUsername(@RequestParam String username) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("userInfo",userService.getUserInfoByUsername(username));
+        return result;
+    }
 
     /*根据用户名修改密码*/
     //    @UserLoginToken
@@ -194,5 +199,55 @@ public class UserController {
         result.put("changePasswordByUsername",userService.changePasswordByUsername(username,password));
         return result;
     }
-
+    /*
+      *升级用户
+      * */
+//    @UserLoginToken
+    @ApiOperation(value = "")
+    @RequestMapping(value = "/upgrade", method = RequestMethod.POST)
+    public HashMap upgradeUser(@RequestParam("userId")String userId) {
+        HashMap result = new HashMap();
+        result.put("msg",userService.upgradeUser(userId));
+        return result;
+    }
+    /*
+     *降级用户
+     * */
+//    @UserLoginToken
+    @ApiOperation(value = "")
+    @RequestMapping(value = "/downgrade", method = RequestMethod.POST)
+    public HashMap downgradeUser(@RequestParam("userId")String userId) {
+        HashMap result = new HashMap();
+        result.put("msg",userService.downgradeUser(userId));
+        return result;
+    }
+    /*
+  *发单者remark和complain
+  * */
+    //    @UserLoginToken
+    @ApiOperation(value = "")
+    @RequestMapping(value = "/getFromUser", method = RequestMethod.GET)
+    public HashMap getComplain() {
+        HashMap result = new HashMap();
+        result.put("msg",userService.getComplain());
+        return result;
+    }
+    /*
+*接单者remark和complain
+* */
+//    @UserLoginToken
+    @ApiOperation(value = "")
+    @RequestMapping(value = "/getToUser", method = RequestMethod.GET)
+    public HashMap getComplain1() {
+        HashMap result = new HashMap();
+        result.put("msg",userService.getComplain1());
+        return result;
+    }
+    @ApiOperation(value = "")
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public HashMap test() {
+        HashMap result = new HashMap();
+        result.put("msg","this is test tang");
+        return result;
+    }
 }

@@ -4,6 +4,15 @@ spring:
     url: jdbc:postgresql://120.79.78.24:5432/logistics?charactorEncoding=utf-8&useSSL=false
     username: postgres
     password: tang
+  resources:
+    static-locations: classpath:/static/
+  thymeleaf:
+    cache: true #关闭缓存
+    prefix: classpath:/templates/ #调整页面路径
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java
   jpa:
     show-sql: true
 #    日志中显示sql语句

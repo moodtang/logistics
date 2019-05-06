@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by computer on 2019/1/9.
@@ -50,11 +51,29 @@ public class UserService {
     * 删除用户
     * */
     @Transactional
-    public String deleteUser(String username){
-        if (userRepository.deleteUserEntityByUsername(username)>0)
+    public String deleteUser(String msg){
+        if (userRepository.deleteUserEntityByUsername(msg)>0 || userRepository.deleteUserEntityByUserId(msg)>0)
             return "删除用户成功";
         else
             return "删除用户失败";
+    }
+    /*
+  * 升级用户
+  * */
+    @Transactional
+    public String upgradeUser(String id){
+        if (userRepository.upgradeUser(id)>0 )
+            return "升级用户成功";
+        else
+            return "升级用户失败";
+    }
+//    降级
+    @Transactional
+    public String downgradeUser(String id){
+        if (userRepository.downgradeUser(id)>0 )
+            return "降级用户成功";
+        else
+            return "降级用户失败";
     }
     /*通过用户名查找userEntity
     * */
@@ -106,6 +125,11 @@ public class UserService {
     public UserEntity getInfoByUsername(String username){
         return userRepository.getUserEntitiesByUsername(username);
     }
+     /* web根据用户名获取用户信息
+  * */
+    public List getUserInfoByUsername(String username){
+        return userRepository.getUserInfoByUsername(username);
+    }
     /*
      * 根据用户名修改密码
      * */
@@ -120,5 +144,12 @@ public class UserService {
                 return "密码不能为空";
         }
     }
-
+    /*获取下单者的remark和complain*/
+    public List getComplain() {
+        return userRepository.getComplain();
+    }
+    /*获取接单者的remark和complain*/
+    public List getComplain1() {
+        return userRepository.getComplain1();
+    }
 }

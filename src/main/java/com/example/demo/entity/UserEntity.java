@@ -17,6 +17,7 @@ public class UserEntity {
     private String userSex;
     private String userHead;
     private String userSchool;
+    private Integer creditScore;
 
     @Id
     @Column(name = "user_id")
@@ -140,5 +141,15 @@ public class UserEntity {
         result = 31 * result + (userHead != null ? userHead.hashCode() : 0);
         result = 31 * result + (userSchool != null ? userSchool.hashCode() : 0);
         return result;
+    }
+
+    @Basic
+    @Column(name = "credit_score")
+    public Integer getCreditScore() {
+        return creditScore;
+    }
+
+    public void setCreditScore(Integer creditScore) {
+        this.creditScore = creditScore;
     }
 }

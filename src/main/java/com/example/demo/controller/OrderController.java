@@ -8,20 +8,30 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.repository.query.Param;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 @RestController
 @RequestMapping(value = "order")
-public class
-OrderController {
+public class OrderController {
     @Autowired
     private OrderService orderService;
+    /*
+   *获取订单列表
+   * */
+//    @UserLoginToken
+    @ApiOperation(value = "订单列表",notes = "无参数")
+    @RequestMapping(value = "/allOrderList", method = RequestMethod.GET)
+    public HashMap allOrderList() {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        List<ListOrderEntity> list = new ArrayList<>();
+        list = orderService.getAllOrderList();
+        result.put("orderList",list);
+        return result;
+    }
     /*
      *获取未接单订单列表
      * */
@@ -188,9 +198,9 @@ OrderController {
     * */
     @ApiOperation(value = "投诉,评价",notes = "orderId,msg,标志位int型(1是下单者complain，2是接单者complain，3是下单者remark,4是接单者remark)")
     @RequestMapping(value = "/complainRemark", method = RequestMethod.POST)
-    public HashMap complaintByFromUser(String orderId,String msg,Integer status) {
+    public HashMap complaintByFromUser(String orderId,String msg,Integer status,Integer grade) {
         HashMap<String, Object> result = new HashMap<String, Object>();
-        result.put("msg",orderService.complainRemark(orderId,msg,status));
+        result.put("msg",orderService.complainRemark(orderId,msg,status,grade));
         return result;
     }
 
@@ -218,5 +228,14 @@ OrderController {
         result.put("orderList",orderService.getOrderByToUserStatus(username,status));
         return result;
     }
-
+    /*
+       * 根据id删除订单
+       * */
+    @ApiOperation(value = "根据id删除订单",notes = "")
+    @RequestMapping(value = "/deleteOrder", method = RequestMethod.POST)
+    public HashMap deleteOrder(@RequestParam ("orderId")String orderId) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("msg",orderService.deleteOrder(orderId));
+        return result;
+    }
 }
