@@ -16,8 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 @RestController
 @RequestMapping(value = "order")
-public class
-OrderController {
+public class OrderController {
     @Autowired
     private OrderService orderService;
     /*
@@ -199,9 +198,9 @@ OrderController {
     * */
     @ApiOperation(value = "投诉,评价",notes = "orderId,msg,标志位int型(1是下单者complain，2是接单者complain，3是下单者remark,4是接单者remark)")
     @RequestMapping(value = "/complainRemark", method = RequestMethod.POST)
-    public HashMap complaintByFromUser(String orderId,String msg,Integer status) {
+    public HashMap complaintByFromUser(String orderId,String msg,Integer status,Integer grade) {
         HashMap<String, Object> result = new HashMap<String, Object>();
-        result.put("msg",orderService.complainRemark(orderId,msg,status));
+        result.put("msg",orderService.complainRemark(orderId,msg,status,grade));
         return result;
     }
 

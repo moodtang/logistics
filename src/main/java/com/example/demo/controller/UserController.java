@@ -243,4 +243,11 @@ public class UserController {
         result.put("msg",userService.getComplain1());
         return result;
     }
+    @ApiOperation(value = "")
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public HashMap test() {
+        HashMap result = new HashMap();
+        result.put("msg","this is test tang");
+        return result;
+    }
 }

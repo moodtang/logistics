@@ -23,14 +23,21 @@ public interface UserRepository extends Repository<UserEntity,Integer> {
     @Modifying(clearAutomatically = true)
     @Query("update UserEntity u set u.userHead = ?2 where u.userId = ?1")
     Integer saveHeadPic(String uid,String picUrl);
+//    升级
     @Transactional
     @Modifying(clearAutomatically = true)
     @Query("update UserEntity u set u.userLevel = u.userLevel+1 where u.userId = ?1")
     Integer upgradeUser(String uid);
+//降级
     @Transactional
     @Modifying(clearAutomatically = true)
     @Query("update UserEntity u set u.userLevel = u.userLevel-1 where u.userId = ?1")
     Integer downgradeUser(String uid);
+//   更新信誉积分
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    @Query("update UserEntity u set u.userLevel = ?3 ,u.creditScore = ?2 where u.username = ?1")
+    Integer setUserScore(String username,int score,int userLevel);
     @Transactional
     UserEntity getUserEntitiesByUserId(String userId);
     @Transactional
