@@ -141,8 +141,9 @@ OrderService {
      * */
     @Transactional
     public String acceptOrder(ListOrderEntity listOrderEntity) {
-        if(listOrderEntity.getRequireLevel()!=null && listOrderEntity.getLevelToUser()!=null) {
-            if (listOrderEntity.getRequireLevel() <= listOrderEntity.getLevelToUser()) {
+        ListOrderEntity getRequireLevel = orderRepository.findByOrderId(listOrderEntity.getOrderId());
+        if(getRequireLevel.getRequireLevel()!=null && listOrderEntity.getLevelToUser()!=null) {
+            if (getRequireLevel.getRequireLevel() <= listOrderEntity.getLevelToUser()) {
                 if (orderRepository.acceptOrder(listOrderEntity.getOrderToUser(), listOrderEntity.getLevelToUser(), listOrderEntity
                         .getOrderId()) > 0) {
                     return "accept order success";
@@ -152,7 +153,7 @@ OrderService {
                 return "your level is too low to take job ";
         }
         else {
-            if (listOrderEntity.getRequireLevel()==null){
+            if (getRequireLevel.getRequireLevel()==null){
                 if (orderRepository.acceptOrder(listOrderEntity.getOrderToUser(), listOrderEntity.getLevelToUser(), listOrderEntity
                         .getOrderId()) > 0) {
                     return "accept order success";

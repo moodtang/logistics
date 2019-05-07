@@ -61,6 +61,7 @@ public class UserController {
                 return tokenUser;
             }else {
                 String token = tokenService.getToken(userForBase);
+                tokenUser.put("message", "success");
                 tokenUser.put("token", token);
                 tokenUser.put("user", userForBase);
                 return tokenUser;
